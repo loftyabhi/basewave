@@ -17,7 +17,7 @@
         "kkomelin/laravel-translatable-string-exporter": "^1.22",
         "kornrunner/ethereum-util": "^0.1.0",
         "kornrunner/secp256k1": "^0.3.0",
-        "paragonie/ecc": "^2.0"
+        "paragonie/ecc": "^2.0",
         "laravel/framework": "^11.31",
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
