@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://basewave.onrender.com'),
+    'url' => env('APP_URL', 'https://basewavebeta.sarkaritool.com'),
 
     /*
     |--------------------------------------------------------------------------
