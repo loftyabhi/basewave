@@ -18,6 +18,9 @@ Route::get('/dashboard', function () {
 Route::get('/terms', fn() => Inertia::render('Terms'))->name('terms');
 Route::get('/privacy', fn() => Inertia::render('Privacy'))->name('privacy');
 
+Route::get('/healthz', function () {
+    return response()->json(['status' => 'ok'], 200);
+});
 
 Route::controller(S3Controller::class)
     ->group(function () {

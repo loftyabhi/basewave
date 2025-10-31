@@ -6,6 +6,8 @@ services:
     plan: free
     branch: main
     region: oregon
+    autoDeploy: true
+    healthCheckPath: /healthz
 
     # Render will use your Dockerfile automatically
     buildCommand: "" # leave blank since Dockerfile handles build
