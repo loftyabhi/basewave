@@ -13,7 +13,7 @@ class AppkitCsp
 
        $allowedOrigins = config('app.env') === 'local'
     ? "http://localhost:*"
-    : "https://basewavebeta.sarkaritool.com";
+    : "https://basewave.onrender.com";
 
 $response->header(
     'Content-Security-Policy-Report-Only',
