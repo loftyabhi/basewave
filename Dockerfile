@@ -1,40 +1,33 @@
-# Use PHP with Composer preinstalled
-FROM composer:2.7 AS build
-
-WORKDIR /app
-
-# Copy composer files and install dependencies
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
-
-# Copy the rest of the app
-COPY . .
-
-# Install Node and build assets (optional)
-RUN apt-get update && apt-get install -y nodejs npm
-RUN npm install && npm run build
-
-# -------------------------
-# Stage 2: Production Image
-# -------------------------
+# Use the official PHP image with Apache
 FROM php:8.2-apache
 
-# Enable Apache rewrite
-RUN a2enmod rewrite
-
+# Set working directory
 WORKDIR /var/www/html
 
-# Copy from build stage
-COPY --from=build /app ./
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git unzip libzip-dev libpng-dev libonig-dev libxml2-dev zip curl && \
+    docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Copy Laravel .env (Render injects env automatically)
-COPY .env.example .env
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Copy composer and lock files first
+COPY composer.json composer.lock ./
 
-# Expose port 80
+# Install composer dependencies (without dev)
+RUN curl -sS https://getcomposer.org/installer | php && \
+    mv composer.phar /usr/local/bin/composer && \
+    composer install --no-dev --no-scripts --optimize-autoloader --ignore-platform-reqs
+
+# Now copy the rest of the app
+COPY . .
+
+# Run artisan scripts (after files are present)
+RUN composer dump-autoload && php artisan key:generate --ansi || true
+
+# Set proper permissions
+RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html/storage
+
 EXPOSE 80
-
-# Start Apache
 CMD ["apache2-foreground"]
