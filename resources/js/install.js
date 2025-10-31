@@ -11,12 +11,11 @@ import "tippy.js/themes/light.css";
 import "v-calendar/dist/style.css";
 import { createI18n } from "vue-i18n";
 import VueTippy from "vue-tippy";
-import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { ZiggyVue } from 'ziggy-js';
 import "../css/vcalendar-theme.css";
 import messages from "./vue-i18n-locales.generated.js";
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>
