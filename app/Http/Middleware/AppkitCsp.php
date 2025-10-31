@@ -11,10 +11,15 @@ class AppkitCsp
     {
         $response = $next($request);
 
-        $response->header(
-            'Content-Security-Policy-Report-Only',
-            "frame-ancestors 'self' http://localhost:* https://*.pages.dev https://*.vercel.app https://*.ngrok-free.app https://secure-mobile.walletconnect.com https://secure-mobile.walletconnect.org https://secure.walletconnect.org"
-        );
+       $allowedOrigins = config('app.env') === 'local'
+    ? "http://localhost:*"
+    : "https://basewave.onrender.com";
+
+$response->header(
+    'Content-Security-Policy-Report-Only',
+    "frame-ancestors 'self' {$allowedOrigins} https://*.pages.dev https://*.vercel.app https://*.ngrok-free.app https://secure-mobile.walletconnect.com https://secure-mobile.walletconnect.org https://secure.walletconnect.org"
+);
+
         $response->header('Cross-Origin-Opener-Policy', 'unsafe-none');
         return $response;
     }
