@@ -1,7 +1,46 @@
 # .render.yaml
 services:
   - type: web
-    name: basewave-app
+    name: basewave
     env: docker
     plan: free
-    dockerfilePath: ./Dockerfile
+    branch: main
+    region: oregon
+
+    # Render will use your Dockerfile automatically
+    buildCommand: "" # leave blank since Dockerfile handles build
+    startCommand: "" # leave blank too (Dockerfile CMD runs Apache)
+
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://basewave.onrender.com
+      - key: APP_KEY
+        sync: false
+      - key: COINCAP_API_KEY
+        sync: false
+
+      # PostgreSQL settings (connect your Render PostgreSQL DB)
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: basewave-db
+          property: host
+      - key: DB_PORT
+        value: 5432
+      - key: DB_DATABASE
+        fromDatabase:
+          name: basewave-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: basewave-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: basewave-db
+          property: password
