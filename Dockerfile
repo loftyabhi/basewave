@@ -13,6 +13,11 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd \
     && a2enmod rewrite
 
+
+# Copy the full project
+COPY . .
+
+
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -23,9 +28,6 @@ RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 # Copy package files and build frontend
 COPY package.json package-lock.json* ./
 RUN npm ci && npm run build
-
-# Copy the full project
-COPY . .
 
 # Laravel storage + cache permissions
 RUN chown -R www-data:www-data /var/www/html \
