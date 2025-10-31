@@ -1,12 +1,25 @@
-import axios from 'axios';
+import axios from "axios";
 window.axios = axios;
-
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 /**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allow your team to quickly build robust real-time web applications.
+ * Laravel Echo and Pusher setup
  */
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
 
-import './echo';
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: "pusher",
+    key: import.meta.env.VITE_PUSHER_APP_KEY,
+    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? "ap2",
+    forceTLS: true,
+    encrypted: true,
+    wsHost: import.meta.env.VITE_PUSHER_HOST
+        ? import.meta.env.VITE_PUSHER_HOST.replace(/^https?:\/\//, "")
+        : `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
+    wsPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
+    wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
+    disableStats: true,
+});
