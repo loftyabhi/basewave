@@ -1,31 +1,40 @@
-# Use official PHP image with Composer and Node preinstalled
-FROM php:8.2-apache
+# Use PHP with Composer preinstalled
+FROM composer:2.7 AS build
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git unzip curl nodejs npm \
-    && docker-php-ext-install pdo pdo_mysql
+WORKDIR /app
 
-# Install Composer globally
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Copy project files
-COPY . /var/www/html
-
-# Set working directory
-WORKDIR /var/www/html
-
-# Install PHP dependencies
+# Copy composer files and install dependencies
+COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader
 
-# Build frontend
+# Copy the rest of the app
+COPY . .
+
+# Install Node and build assets (optional)
+RUN apt-get update && apt-get install -y nodejs npm
 RUN npm install && npm run build
 
-# Laravel setup
-RUN php artisan key:generate --force
+# -------------------------
+# Stage 2: Production Image
+# -------------------------
+FROM php:8.2-apache
 
-# Expose port
+# Enable Apache rewrite
+RUN a2enmod rewrite
+
+WORKDIR /var/www/html
+
+# Copy from build stage
+COPY --from=build /app ./
+
+# Copy Laravel .env (Render injects env automatically)
+COPY .env.example .env
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Expose port 80
 EXPOSE 80
 
-# Start Laravel server
-CMD php artisan serve --host=0.0.0.0 --port=80
+# Start Apache
+CMD ["apache2-foreground"]
