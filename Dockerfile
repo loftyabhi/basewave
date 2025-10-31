@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy composer files and install dependencies
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # Copy the rest of the app
 COPY . .
