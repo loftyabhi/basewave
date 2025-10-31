@@ -2,6 +2,11 @@
 services:
   - type: web
     name: basewave-app
-    env: docker
+    env: php
     plan: free
-    dockerfilePath: ./Dockerfile
+    buildCommand: |
+      apt-get update && apt-get install -y unzip git nodejs npm
+      composer install --no-dev --optimize-autoloader
+      npm install
+      npm run build
+    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
