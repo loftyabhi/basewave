@@ -38,7 +38,6 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available
 
 
 # Php Database Create Command
-RUN php artisan key:generate
 RUN php artisan migrate 
 
 # Health check endpoint for Render
