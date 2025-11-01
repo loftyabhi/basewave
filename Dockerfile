@@ -36,17 +36,17 @@ RUN chown -R www-data:www-data /var/www/html \
 # Apache serve public folder
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
-# Health check endpoint for Render
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost/healthz || exit 1
-
-# Expose HTTP port
-EXPOSE 80
-
 # Generate Laravel application key
 RUN php artisan key:generate
 
 # Run migrations (optional: safe to fail if db not ready yet)
 RUN php artisan migrate --force || true
- # Start Apache server
+# Expose HTTP port
+EXPOSE 80
+
+# Health check endpoint for Render
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost/healthz || exit 1
+
+# Start Apache
 CMD ["apache2-foreground"]
