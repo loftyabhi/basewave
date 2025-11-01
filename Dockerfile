@@ -44,4 +44,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
 EXPOSE 80
 
 # Start Apache
+RUN php artisan key:generate
 CMD php artisan migrate --force && apache2-foreground
