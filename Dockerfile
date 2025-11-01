@@ -43,6 +43,10 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
 # Expose HTTP port
 EXPOSE 80
 
-# Start Apache
+# Generate Laravel application key
 RUN php artisan key:generate
-CMD php artisan migrate --force && apache2-foreground
+
+# Run migrations (optional: safe to fail if db not ready yet)
+RUN php artisan migrate --force || true
+ # Start Apache server
+CMD ["apache2-foreground"]
