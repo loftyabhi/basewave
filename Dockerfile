@@ -37,7 +37,7 @@ RUN chown -R www-data:www-data /var/www/html \
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 # Generate Laravel application key
-RUN php artisan key:generate
+# RUN php artisan key:generate
 
 # Run migrations (optional: safe to fail if db not ready yet)
 RUN php artisan migrate --force || true
