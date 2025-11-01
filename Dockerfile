@@ -28,14 +28,18 @@ RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 # Copy package files and build frontend
 COPY package.json package-lock.json* ./
 RUN npm ci && npm run build
-RUN php artisan key:generate
-RUN php artisan migrate 
+
 # Laravel storage + cache permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Apache serve public folder
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+
+
+# Php Database Create Command
+RUN php artisan key:generate
+RUN php artisan migrate 
 
 # Health check endpoint for Render
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
